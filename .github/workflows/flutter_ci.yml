@@ -1,32 +1,42 @@
-# Пайплайн GitHub Actions: проверка при push / PR
-# Вкладка репозитория: Actions → выбрать workflow → смотреть логи запусков
+# Проверка Flutter-проекта при push (аналог пайплайна Django check)
+# GitHub → вкладка Actions → workflow «Flutter check»
 
-name: Flutter CI
+name: Flutter check
 
 on:
   push:
-    branches: [main, master]
-  pull_request:
-    branches: [main, master]
+    branches: [master, main]
+  # pull_request:
+  #   branches: [master, main]
 
 jobs:
-  analyze-and-test:
+  verify_project_build:
+    name: Verify project build
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Flutter SDK
+      - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
           channel: stable
           cache: true
 
-      - name: Dependencies
-        run: flutter pub get
+      - name: Install dependencies
+        run: |
+          echo "Установка зависимостей (flutter pub get)"
+          flutter pub get
+          echo "Зависимости установлены"
 
-      - name: Analyze
-        run: flutter analyze
+      - name: Check Dart analyzer
+        run: |
+          echo "Проверка кода (flutter analyze)"
+          flutter analyze
+          echo "Анализ пройден"
 
-      - name: Test
-        run: flutter test
+      - name: Run tests
+        run: |
+          echo "Запуск тестов (flutter test)"
+          flutter test
+          echo "Тесты пройдены"
